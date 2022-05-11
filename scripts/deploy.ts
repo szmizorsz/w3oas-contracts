@@ -4,6 +4,8 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 import { ethers } from "hardhat";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -13,13 +15,23 @@ async function main() {
   // manually to make sure everything is compiled
   // await hre.run('compile');
 
+  if (!process.env.RELAYER_ADDRESS) {
+    throw new Error("Relayer address not defined");
+  }
   // We get the contract to deploy
-  const Greeter = await ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const CommunityNFTFactory = await ethers.getContractFactory(
+    "CommunityNFTFactory"
+  );
+  const communityNFTFactory = await CommunityNFTFactory.deploy(
+    process.env.RELAYER_ADDRESS
+  );
 
-  await greeter.deployed();
+  await communityNFTFactory.deployed();
 
-  console.log("Greeter deployed to:", greeter.address);
+  console.log(
+    "Community NFT factory deployed to:",
+    communityNFTFactory.address
+  );
 }
 
 // We recommend this pattern to be able to use async/await everywhere
