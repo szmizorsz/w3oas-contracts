@@ -19,7 +19,8 @@ contract CommunityNFTFactory is Ownable {
   ) public onlyRelayerOrOwner {
     CommunityNFT communityNFT = new CommunityNFT(
       communityOwner,
-      membershipNFTuri
+      membershipNFTuri,
+      relayer
     );
     nftContractsByCommunityId[communityId] = communityNFT;
   }

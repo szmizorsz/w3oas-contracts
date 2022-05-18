@@ -33,7 +33,8 @@ describe("CommunityNFT", function () {
     )) as CommunityNFT__factory;
     communityNFT = await communityNFTTokenFactory.deploy(
       communityOwner.address,
-      membershipNFTtokenURI
+      membershipNFTtokenURI,
+      relayer.address
     );
     await communityNFT.deployed();
   });
@@ -119,6 +120,25 @@ describe("CommunityNFT", function () {
       nftOwner2.address,
       nftOwner3.address,
     ]);
+    expect(
+      await communityNFT.balanceOf(nftOwner.address, membershipNFTid)
+    ).to.equal(1);
+    expect(
+      await communityNFT.balanceOf(nftOwner2.address, membershipNFTid)
+    ).to.equal(1);
+    expect(
+      await communityNFT.balanceOf(nftOwner3.address, membershipNFTid)
+    ).to.equal(1);
+  });
+
+  it("Should airdrop NFT membership from relayer", async function () {
+    await communityNFT
+      .connect(relayer)
+      .airdropMembershipNft([
+        nftOwner.address,
+        nftOwner2.address,
+        nftOwner3.address,
+      ]);
     expect(
       await communityNFT.balanceOf(nftOwner.address, membershipNFTid)
     ).to.equal(1);

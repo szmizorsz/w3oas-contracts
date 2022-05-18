@@ -8,13 +8,15 @@ contract CommunityNFT is ERC1155URIStorage, Ownable {
   address public relayer;
   uint256 constant membershipNFTid = 1;
 
-  constructor(address communityOwner, string memory membershipNFTuri)
-    ERC1155("")
-  {
-    relayer = msg.sender;
+  constructor(
+    address communityOwner,
+    string memory membershipNFTuri,
+    address _relayer
+  ) ERC1155("") {
+    relayer = _relayer;
     transferOwnership(communityOwner);
-    mintMembershipNFT(communityOwner);
-    setURI(membershipNFTid, membershipNFTuri);
+    _mint(communityOwner, membershipNFTid, 1, "");
+    _setURI(membershipNFTid, membershipNFTuri);
   }
 
   function mintMembershipNFT(address nftOwner) public onlyRelayerOrOwner {
