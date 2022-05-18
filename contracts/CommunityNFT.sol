@@ -30,6 +30,15 @@ contract CommunityNFT is ERC1155URIStorage, Ownable {
     _mint(nftOwner, tokenId, amount, "");
   }
 
+  function airdropMembershipNft(address[] memory recepients)
+    public
+    onlyRelayerOrOwner
+  {
+    for (uint256 i = 0; i < recepients.length; i++) {
+      mintMembershipNFT(recepients[i]);
+    }
+  }
+
   function setURI(uint256 tokenId, string memory tokenURI)
     public
     onlyRelayerOrOwner

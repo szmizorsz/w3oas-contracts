@@ -12,12 +12,21 @@ describe("CommunityNFT", function () {
   let newRelayer: SignerWithAddress;
   let nftOwner: SignerWithAddress;
   let anotherAddress: SignerWithAddress;
+  let nftOwner2: SignerWithAddress;
+  let nftOwner3: SignerWithAddress;
   const membershipNFTid = 1;
   const membershipNFTtokenURI = "tokenURI";
 
   beforeEach(async function () {
-    [relayer, communityOwner, nftOwner, anotherAddress, newRelayer] =
-      await ethers.getSigners();
+    [
+      relayer,
+      communityOwner,
+      nftOwner,
+      anotherAddress,
+      newRelayer,
+      nftOwner2,
+      nftOwner3,
+    ] = await ethers.getSigners();
 
     const communityNFTTokenFactory = (await ethers.getContractFactory(
       "CommunityNFT"
@@ -102,5 +111,30 @@ describe("CommunityNFT", function () {
     expect(
       await communityNFT.balanceOf(nftOwner.address, membershipNFTid)
     ).to.equal(1);
+  });
+
+  it("Should airdrop NFT membership", async function () {
+    await communityNFT.airdropMembershipNft([
+      nftOwner.address,
+      nftOwner2.address,
+      nftOwner3.address,
+    ]);
+    expect(
+      await communityNFT.balanceOf(nftOwner.address, membershipNFTid)
+    ).to.equal(1);
+    expect(
+      await communityNFT.balanceOf(nftOwner2.address, membershipNFTid)
+    ).to.equal(1);
+    expect(
+      await communityNFT.balanceOf(nftOwner3.address, membershipNFTid)
+    ).to.equal(1);
+  });
+
+  it("Should NOT airdrop NFT membership from an address that is not the relayer or the community owner", async function () {
+    await expect(
+      communityNFT
+        .connect(anotherAddress)
+        .airdropMembershipNft([nftOwner.address])
+    ).to.be.revertedWith("Only owner or relayer can mint");
   });
 });
